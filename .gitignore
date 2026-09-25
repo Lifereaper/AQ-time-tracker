@@ -1,0 +1,8 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+.vs/
+*.user
+
+# Local app mappings database
+user_mappings.json
