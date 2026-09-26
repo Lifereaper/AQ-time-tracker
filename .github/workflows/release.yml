@@ -25,13 +25,22 @@ jobs:
       uses: nuget/setup-nuget@v2
 
     - name: Restore NuGet Packages
-      run: nuget restore NGTecoClockDashboard1.sln
+      shell: powershell
+      run: |
+        $sln = Get-ChildItem -Filter *.sln -Recurse | Select-Object -First 1
+        nuget restore $sln.FullName
 
     - name: Build WPF Project
-      run: msbuild NGTecoClockDashboard1.sln /p:Configuration=Release /p:Platform="Any CPU"
+      shell: powershell
+      run: |
+        $sln = Get-ChildItem -Filter *.sln -Recurse | Select-Object -First 1
+        msbuild $sln.FullName /p:Configuration=Release /p:Platform="Any CPU"
 
     - name: Zip Built Binaries
-      run: Compress-Archive -Path NGTecoClockDashboard1\bin\Release\* -DestinationPath NGTecoClockDashboard.zip
+      shell: powershell
+      run: |
+        $releaseDir = Get-ChildItem -Path . -Recurse -Filter "Release" -Directory | Where-Object { $_.FullName -like "*\bin\Release" } | Select-Object -First 1
+        Compress-Archive -Path "$($releaseDir.FullName)\*" -DestinationPath NGTecoClockDashboard.zip
 
     - name: Update update.xml
       shell: powershell
